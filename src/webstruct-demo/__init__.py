@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+import joblib
 from lxml.html import html5parser
 import lxml.html
 import requests
@@ -6,7 +7,7 @@ import yarl
 
 
 webstruct_demo = Flask(__name__, instance_relative_config=True)
-webstruct_demo.config.from_object('config')
+webstruct_demo.config.from_pyfile('config.py')
 
 
 def absolutize_link(link, base_url):
@@ -97,6 +98,8 @@ def index():
     tree = absolute_links(tree, url)
     tree = parent_links(tree, output)
     content = lxml.html.tostring(tree).decode(response.encoding)
+
+    model = joblib.load(webstruct_demo.config['MODEL_PATH'])
 
     values = {'url': url, 'output': output, 'iframe': content}
     return render_template('main.html', **values)
