@@ -112,6 +112,8 @@ def index():
     tree = absolute_links(tree, url)
     tree = parent_links(tree, request.url)
 
+    title = tree.xpath('//title')[0].text
+
     model = joblib.load(webstruct_demo.config['MODEL_PATH'])
     tree, tokens, tags = run_model(tree, model)
     if output == 'html':
@@ -138,5 +140,5 @@ def index():
                 )
         content = '<pre>' + json.dumps(groups, indent=4) + '</pre>'
 
-    values = {'url': url, 'output': output, 'iframe': content}
+    values = {'url': url, 'output': output, 'iframe': content, 'title': title}
     return render_template('main.html', **values)
