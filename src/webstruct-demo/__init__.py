@@ -119,7 +119,7 @@ def get_html_content(response, base_url, output):
                 url=url
                 )
         content = lxml.html.tostring(tree).decode(response.encoding)
-    elif output == 'json':
+    elif output == 'entities':
         entities = webstruct.sequence_encoding.IobEncoder.group(zip(tokens, tags))
         entities = webstruct.model._drop_empty(
             (model.build_entity(tokens), tag)
