@@ -100,17 +100,12 @@ def run_model(tree, model):
     return tree, html_tokens, tags
 
 
-@webstruct_demo.route('/')
-def index():
-    url = request.args.get('url', 'http://en.wikipedia.org/')
-    output = request.args.get('output', 'html')
-
-    response = requests.get(url)
-
+def get_html_content(response, base_url, output):
+    url = response.url
     tree = html5parser.document_fromstring(response.content.decode(response.encoding))
     tree = remove_namespace(tree)
     tree = absolute_links(tree, url)
-    tree = parent_links(tree, request.url)
+    tree = parent_links(tree, base_url)
 
     title = tree.xpath('//title')[0].text
 
@@ -140,5 +135,28 @@ def index():
                 )
         content = webstruct_demo.jinja_env.get_template('groups.html').render(groups=groups)
 
-    values = {'url': url, 'output': output, 'iframe': content, 'title': title}
+    return content, title
+
+
+
+@webstruct_demo.route('/')
+def index():
+    url = request.args.get('url', 'http://en.wikipedia.org/')
+    output = request.args.get('output', 'html')
+
+    response = requests.get(url)
+    try:
+        content, title = get_html_content(response, request.url, output)
+        iframe_url = None
+    except:
+        content = None
+        title = ''
+        iframe_url = url
+
+    values = {'url': url,
+              'output': output,
+              'srcdoc': content,
+              'srcurl': iframe_url,
+              'title': title}
+
     return render_template('main.html', **values)
