@@ -53,7 +53,8 @@ def absolute_links(tree, url):
     return tree
 
 
-def parent_links(tree, output):
+def parent_links(tree, base_url):
+    base_url = yarl.URL(base_url)
     for _, element in lxml.html.etree.iterwalk(tree, events=('start', )):
         if not isinstance(element.tag, str):
             continue
@@ -67,10 +68,7 @@ def parent_links(tree, output):
         url = element.attrib['href']
 
         element.attrib['target'] = '_parent'
-        element.attrib['href'] = str(yarl.URL.build(
-            path='/',
-            query={'url':url, 'output': output})
-            )
+        element.attrib['href'] = str(base_url.with_query(url=url))
 
     return tree
 
@@ -108,7 +106,7 @@ def index():
     tree = html5parser.document_fromstring(response.content.decode(response.encoding))
     tree = remove_namespace(tree)
     tree = absolute_links(tree, url)
-    tree = parent_links(tree, output)
+    tree = parent_links(tree, request.url)
 
     model = joblib.load(webstruct_demo.config['MODEL_PATH'])
     tree, tokens, tags = run_model(tree, model)
