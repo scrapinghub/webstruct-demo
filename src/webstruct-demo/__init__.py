@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request
 import joblib
-import json
 from lxml.html import html5parser
 import lxml.html
 import requests
