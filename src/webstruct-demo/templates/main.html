@@ -3,7 +3,21 @@
 {% block title %}Hello world{% endblock %}
 
 {% block content %}
+    <nav class="navbar navbar-expand-lg navbar-light"  style="background-color: #e3f2fd;">
+
+        <div class="collapse navbar-collapse">
+            <form class="form-inline col-lg-12">
+                <label class="col-lg-1" for="urlInput">URL</label>
+                <input class="form-control col-lg-9" type="url" placeholder="http://..." name="url" id="urlInput">
+                <select class="form-control col-lg-1" name="output">
+                    <option value="html">HTML</option>
+                    <option value="json">JSON</option>
+                    <option value="group-json">groupped JSON</option>
+                </select>
+                <button class="btn col-lg-1 btn-info" type="submit">Extract</button>
+            </form>
+        </div>
+    </nav>
     <div class="container-fluid">
-        Hello world
     </div>
 {% endblock %}
