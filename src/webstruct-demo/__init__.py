@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request
 import joblib
+import json
 from lxml.html import html5parser
 import lxml.html
 import requests
 import yarl
+
+import webstruct.model
+import webstruct.sequence_encoding
 import webstruct.webannotator
 
 
@@ -110,13 +114,23 @@ def index():
 
     model = joblib.load(webstruct_demo.config['MODEL_PATH'])
     tree, tokens, tags = run_model(tree, model)
-    tree = model.html_tokenizer.detokenize_single(tokens, tags)
-    tree = webstruct.webannotator.to_webannotator(
-            tree,
-            entity_colors=model.entity_colors,
-            url=url
-            )
-    content = lxml.html.tostring(tree).decode(response.encoding)
+    if output == 'html':
+        tree = model.html_tokenizer.detokenize_single(tokens, tags)
+        tree = webstruct.webannotator.to_webannotator(
+                tree,
+                entity_colors=model.entity_colors,
+                url=url
+                )
+        content = lxml.html.tostring(tree).decode(response.encoding)
+    elif output == 'json':
+        entities = webstruct.sequence_encoding.IobEncoder.group(zip(tokens, tags))
+        entities = webstruct.model._drop_empty(
+            (model.build_entity(tokens), tag)
+            for (tokens, tag) in entities if tag != 'O'
+        )
+        content = json.dumps(entities, indent=4)
+    else:
+        content = ''
 
     values = {'url': url, 'output': output, 'iframe': content}
     return render_template('main.html', **values)
