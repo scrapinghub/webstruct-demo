@@ -1,30 +1,35 @@
 
 {% extends "layout.html" %}
 
-{% macro render_entities(entities) %}
+{% macro render_entities_header() %}
     <div class="container">
-        <table class="table table-striped">
+        <table class="table table-bordered">
           <thead class="thead-dark">
             <tr>
-              <th scope="col">#</th>
               <th scope="col">Value</th>
               <th scope="col">Type</th>
             </tr>
           </thead>
           <tbody>
+{% endmacro %}
+
+{% macro render_entities(entities, is_dark, is_striped) %}
           {% for entity in entities %}
             <tr>
-                <th scope="row">{{loop.index}}</th>
               <td>{{entity[0]}}</td>
               <td>{{entity[1]}}</td>
             </tr>
           {% endfor %}
+{% endmacro %}
 
+{% macro render_entities_footer() %}
           </tbody>
         </table>
     </div>
 {% endmacro %}
 
 {% block content %}
+    {{render_entities_header()}}
     {{render_entities(entities)}}
+    {{render_entities_footer()}}
 {% endblock %}

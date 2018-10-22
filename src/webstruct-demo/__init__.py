@@ -138,7 +138,7 @@ def index():
                 dont_penalize=None,
                 join_tokens=model.build_entity
                 )
-        content = '<pre>' + json.dumps(groups, indent=4) + '</pre>'
+        content = webstruct_demo.jinja_env.get_template('groups.html').render(groups=groups)
 
     values = {'url': url, 'output': output, 'iframe': content, 'title': title}
     return render_template('main.html', **values)
