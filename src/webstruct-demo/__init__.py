@@ -4,6 +4,7 @@ from lxml.html import html5parser
 import lxml.html
 import requests
 import yarl
+import webstruct.webannotator
 
 
 webstruct_demo = Flask(__name__, instance_relative_config=True)
@@ -86,6 +87,17 @@ def remove_namespace(tree):
     return tree
 
 
+_TOKENS_PER_PART = 2000
+def run_model(tree, model):
+    html_tokens, _ = model.html_tokenizer.tokenize_single(tree)
+    if not html_tokens:
+        return tree, list(), list()
+    tree = html_tokens[0].elem.getroottree().getroot()
+    tags = model.model.predict([html_tokens[i:i+_TOKENS_PER_PART] for i in range(0, len(html_tokens), _TOKENS_PER_PART)])
+    tags = [i for t in tags for i in t]
+    return tree, html_tokens, tags
+
+
 @webstruct_demo.route('/')
 def index():
     url = request.args.get('url', 'http://en.wikipedia.org/')
@@ -97,9 +109,16 @@ def index():
     tree = remove_namespace(tree)
     tree = absolute_links(tree, url)
     tree = parent_links(tree, output)
-    content = lxml.html.tostring(tree).decode(response.encoding)
 
     model = joblib.load(webstruct_demo.config['MODEL_PATH'])
+    tree, tokens, tags = run_model(tree, model)
+    tree = model.html_tokenizer.detokenize_single(tokens, tags)
+    tree = webstruct.webannotator.to_webannotator(
+            tree,
+            entity_colors=model.entity_colors,
+            url=url
+            )
+    content = lxml.html.tostring(tree).decode(response.encoding)
 
     values = {'url': url, 'output': output, 'iframe': content}
     return render_template('main.html', **values)
