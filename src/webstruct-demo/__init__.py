@@ -130,7 +130,13 @@ def index():
         )
         content = json.dumps(entities, indent=4)
     else:
-        content = ''
+        groups = webstruct.model.extract_entitiy_groups(
+                tokens,
+                tags,
+                dont_penalize=None,
+                join_tokens=model.build_entity
+                )
+        content = json.dumps(groups, indent=4)
 
     values = {'url': url, 'output': output, 'iframe': content}
     return render_template('main.html', **values)
