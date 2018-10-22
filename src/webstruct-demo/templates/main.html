@@ -2,22 +2,31 @@
 
 {% block title %}Hello world{% endblock %}
 
+{% macro render_output_option(value, output) %}
+    <option value="{{value}}" {% if value==output %}selected{% endif %}>
+{% endmacro %}
+
+
 {% block content %}
     <nav class="navbar navbar-expand-lg navbar-light"  style="background-color: #e3f2fd;">
 
         <div class="collapse navbar-collapse">
             <form class="form-inline col-lg-12">
                 <label class="col-lg-1" for="urlInput">URL</label>
-                <input class="form-control col-lg-9" type="url" placeholder="http://..." name="url" id="urlInput">
+                <input class="form-control col-lg-9" type="url" placeholder="http://..." name="url" id="urlInput" value="{{url}}">
                 <select class="form-control col-lg-1" name="output">
-                    <option value="html">HTML</option>
-                    <option value="json">JSON</option>
-                    <option value="group-json">groupped JSON</option>
+                    {{render_output_option('html', output)}}HTML</option>
+                    {{render_output_option('json', output)}}JSON</option>
+                    {{render_output_option('json-grouped', output)}}groupped JSON</option>
                 </select>
                 <button class="btn col-lg-1 btn-info" type="submit">Extract</button>
             </form>
         </div>
     </nav>
-    <div class="container-fluid">
+    <div class="container">
+        <div class="embed-responsive embed-responsive-1by1">
+            <iframe class="embed-responsive-item" src="{{url}}">
+            </iframe>
+        </div>
     </div>
 {% endblock %}
