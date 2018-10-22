@@ -42,15 +42,39 @@ def absolute_links(tree, url):
     return tree
 
 
+def parent_links(tree, output):
+    for _, element in lxml.html.etree.iterwalk(tree, events=('start', )):
+        if not isinstance(element.tag, str):
+            continue
+
+        if element.tag != 'a':
+            continue
+
+        if 'href' not in element.attrib:
+            continue
+
+        url = element.attrib['href']
+
+        element.attrib['target'] = '_parent'
+        element.attrib['href'] = str(yarl.URL.build(
+            path='/',
+            query={'url':url, 'output': output})
+            )
+
+    return tree
+
+
 @webstruct_demo.route('/')
 def index():
     url = request.args.get('url', 'http://en.wikipedia.org/')
     output = request.args.get('output', 'html')
+
     response = requests.get(url)
 
     parser = lxml.html.HTMLParser(encoding=response.encoding)
     tree = lxml.html.document_fromstring(response.content, parser=parser)
     tree = absolute_links(tree, url)
+    tree = parent_links(tree, output)
     content = lxml.html.etree.tostring(tree).decode(response.encoding)
 
     values = {'url': url, 'output': output, 'iframe': content}

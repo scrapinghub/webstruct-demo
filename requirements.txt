@@ -8,7 +8,9 @@ Jinja2==2.10
 -e git+https://github.com/adsva/python-wapiti.git@e00d4782759c3fd506886c773fc5bf272919b2d0#egg=libwapiti
 lxml==4.2.5
 MarkupSafe==1.0
+multidict==4.4.2
 numpy==1.15.2
+orderedmultidict==1.0
 python-crfsuite==0.9.6
 requests==2.20.0
 requests-file==1.4.3
@@ -22,3 +24,4 @@ tqdm==4.27.0
 urllib3==1.24
 webstruct==0.6
 Werkzeug==0.14.1
+yarl==1.2.6
