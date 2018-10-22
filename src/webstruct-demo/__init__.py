@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 import joblib
-from lxml.html import html5parser
+from lxml.html import html5parser, document_fromstring
 import lxml.html
 import requests
 import yarl
@@ -101,7 +101,7 @@ def run_model(tree, model):
 
 def get_html_content(response, base_url, output):
     url = response.url
-    tree = html5parser.document_fromstring(response.content.decode(response.encoding))
+    tree = html5parser.document_fromstring(response.content)
     tree = remove_namespace(tree)
     tree = absolute_links(tree, url)
     tree = parent_links(tree, base_url)
@@ -143,8 +143,8 @@ def index():
     url = request.args.get('url', 'http://en.wikipedia.org/')
     output = request.args.get('output', 'html')
 
-    response = requests.get(url)
     try:
+        response = requests.get(url)
         content, title = get_html_content(response, request.url, output)
         iframe_url = None
     except:
