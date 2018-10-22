@@ -1,0 +1,13 @@
+{% from "entities.html" import render_entities, render_entities_header, render_entities_footer with context %}
+
+{% extends "layout.html" %}
+
+{% block content %}
+    {{render_entities_header()}}
+    {% for entities in groups %}
+        {{render_entities(entities)}}
+        <tr class="table-secondary"><td></td><td></td></tr>
+    {% endfor %}
+    {{render_entities_footer()}}
+{% endblock %}
+

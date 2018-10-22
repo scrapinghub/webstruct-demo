@@ -14,10 +14,11 @@
 {% endmacro %}
 
 {% macro render_entities(entities, is_dark, is_striped) %}
+          {% set type_mapper = {'PER':'person', 'ORG':'organization', 'FUNC':'role', 'TEL':'Phone'} %}
           {% for entity in entities %}
             <tr>
               <td>{{entity[0]}}</td>
-              <td>{{entity[1]}}</td>
+              <td>{{type_mapper.get(entity[1], entity[1]).capitalize()}}</td>
             </tr>
           {% endfor %}
 {% endmacro %}
