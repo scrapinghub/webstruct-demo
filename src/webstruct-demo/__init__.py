@@ -130,7 +130,7 @@ def index():
             (model.build_entity(tokens), tag)
             for (tokens, tag) in entities if tag != 'O'
         )
-        content = '<pre>' + json.dumps(entities, indent=4) + '</pre>'
+        content = webstruct_demo.jinja_env.get_template('entities.html').render(entities=entities)
     else:
         groups = webstruct.model.extract_entitiy_groups(
                 tokens,

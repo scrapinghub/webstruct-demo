@@ -1,0 +1,30 @@
+
+{% extends "layout.html" %}
+
+{% macro render_entities(entities) %}
+    <div class="container">
+        <table class="table table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Value</th>
+              <th scope="col">Type</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for entity in entities %}
+            <tr>
+                <th scope="row">{{loop.index}}</th>
+              <td>{{entity[0]}}</td>
+              <td>{{entity[1]}}</td>
+            </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+    </div>
+{% endmacro %}
+
+{% block content %}
+    {{render_entities(entities)}}
+{% endblock %}

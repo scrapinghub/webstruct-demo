@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Hello world{% endblock %}
+{% block title %}{{title}}{% endblock %}
 
 {% macro render_output_option(value, output) %}
     <option value="{{value}}" {% if value==output %}selected{% endif %}>
