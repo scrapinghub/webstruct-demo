@@ -128,7 +128,7 @@ def index():
             (model.build_entity(tokens), tag)
             for (tokens, tag) in entities if tag != 'O'
         )
-        content = json.dumps(entities, indent=4)
+        content = '<pre>' + json.dumps(entities, indent=4) + '</pre>'
     else:
         groups = webstruct.model.extract_entitiy_groups(
                 tokens,
@@ -136,7 +136,7 @@ def index():
                 dont_penalize=None,
                 join_tokens=model.build_entity
                 )
-        content = json.dumps(groups, indent=4)
+        content = '<pre>' + json.dumps(groups, indent=4) + '</pre>'
 
     values = {'url': url, 'output': output, 'iframe': content}
     return render_template('main.html', **values)
