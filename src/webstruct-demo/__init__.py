@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from lxml.html import html5parser
 import lxml.html
 import requests
 import yarl
@@ -6,6 +7,27 @@ import yarl
 
 webstruct_demo = Flask(__name__, instance_relative_config=True)
 webstruct_demo.config.from_object('config')
+
+
+def absolutize_link(link, base_url):
+    try:
+        target_url = yarl.URL(link)
+    except:
+        return link
+
+    if target_url.is_absolute() and target_url.scheme:
+        return link
+
+    if target_url.is_absolute() and not target_url.scheme:
+        target_url = target_url.with_scheme(base_url.scheme)
+        return str(target_url)
+
+    try:
+        target_url = base_url.join(target_url)
+    except:
+        return link
+
+    return str(target_url)
 
 
 def absolute_links(tree, url):
@@ -24,20 +46,7 @@ def absolute_links(tree, url):
             if attr not in element.attrib:
                 continue
 
-            try:
-                target_url = yarl.URL(element.attrib[attr])
-            except:
-                continue
-
-            if target_url.is_absolute():
-                continue
-
-            try:
-                target_url = base_url.join(target_url)
-            except:
-                continue
-
-            element.attrib[attr] = str(target_url)
+            element.attrib[attr] = absolutize_link(element.attrib[attr], base_url)
 
     return tree
 
@@ -64,6 +73,18 @@ def parent_links(tree, output):
     return tree
 
 
+def remove_namespace(tree):
+    _NS="{http://www.w3.org/1999/xhtml}"
+    for _, element in lxml.html.etree.iterwalk(tree, events=('start', )):
+        if not isinstance(element.tag, str):
+            continue
+        if not element.tag.startswith(_NS):
+            continue
+        element.tag = element.tag[len(_NS):]
+
+    return tree
+
+
 @webstruct_demo.route('/')
 def index():
     url = request.args.get('url', 'http://en.wikipedia.org/')
@@ -71,11 +92,11 @@ def index():
 
     response = requests.get(url)
 
-    parser = lxml.html.HTMLParser(encoding=response.encoding)
-    tree = lxml.html.document_fromstring(response.content, parser=parser)
+    tree = html5parser.document_fromstring(response.content.decode(response.encoding))
+    tree = remove_namespace(tree)
     tree = absolute_links(tree, url)
     tree = parent_links(tree, output)
-    content = lxml.html.etree.tostring(tree).decode(response.encoding)
+    content = lxml.html.tostring(tree).decode(response.encoding)
 
     values = {'url': url, 'output': output, 'iframe': content}
     return render_template('main.html', **values)

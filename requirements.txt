@@ -2,6 +2,7 @@ certifi==2018.10.15
 chardet==3.0.4
 Click==7.0
 Flask==1.0.2
+html5lib==1.0.1
 idna==2.7
 ItsDangerous==1.0.0
 Jinja2==2.10
@@ -22,6 +23,7 @@ tabulate==0.8.2
 tldextract==2.2.0
 tqdm==4.27.0
 urllib3==1.24
+webencodings==0.5.1
 webstruct==0.6
 Werkzeug==0.14.1
 yarl==1.2.6
