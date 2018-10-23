@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 import joblib
-from lxml.html import html5parser, document_fromstring
+from lxml.html import html5parser
 import lxml.html
 import requests
 import yarl
