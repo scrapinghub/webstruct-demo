@@ -10,6 +10,7 @@ DAWG==0.7.8
 docutils==0.14
 filelock==3.0.9
 Flask==1.0.2
+gunicorn==19.9.0
 html5lib==1.0.1
 idna==2.7
 imagesize==1.1.0
