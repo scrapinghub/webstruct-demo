@@ -5,6 +5,7 @@ RUN apt-get update -qq && \
         git \
         gcc \
         g++ \
+        nginx \
         && \
     rm -rf /var/lib/apt/lists/*
 
@@ -13,6 +14,7 @@ COPY requirements.txt /install
 RUN pip install -r /install/requirements.txt
 RUN pip install git+https://github.com/Supervisor/supervisor.git@5112520
 COPY supervisord.conf /install/
+COPY nginx.conf /install/
 COPY gunicorn /install
 RUN chmod u+x /install/gunicorn
 COPY src /install/src

@@ -3,7 +3,7 @@
 dir=`dirname "$0"`
 pushd "$dir"
 
-gunicorn --bind=0.0.0.0:5001 \
+gunicorn --bind=127.0.0.1:5000 \
          --workers=5 \
          src.webstruct-demo.__init__:webstruct_demo \
          --log-file=- \
