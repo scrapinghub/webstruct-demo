@@ -21,4 +21,5 @@ COPY src /install/src
 COPY build/model.joblib /install
 RUN echo "MODEL_PATH='/install/model.joblib'" > /install/src/instance/config.py
 
+EXPOSE 80
 ENTRYPOINT ["supervisord", "-c", "/install/supervisord.conf", "--nodaemon"]
