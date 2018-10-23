@@ -71,7 +71,7 @@ def parent_links(tree, base_url):
         url = element.attrib['href']
 
         element.attrib['target'] = '_parent'
-        element.attrib['href'] = str(base_url.with_query(url=url))
+        element.attrib['href'] = str(base_url.update_query(url=url))
 
     return tree
 
