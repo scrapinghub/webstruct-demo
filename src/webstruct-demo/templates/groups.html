@@ -9,8 +9,10 @@
 {% macro render_groups_full(groups) %}
     {{render_entities_header()}}
     {% for entities in groups %}
+        {% if loop.index != 1 %}
+            <tr class="table-secondary"><td></td><td></td></tr>
+        {% endif %}
         {{render_entities(entities)}}
-        <tr class="table-secondary"><td></td><td></td></tr>
     {% endfor %}
     {{render_entities_footer()}}
 {% endmacro %}

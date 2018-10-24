@@ -1,11 +1,28 @@
+{% from "entities.html" import render_entities_full with context %}
+{% from "groups.html" import render_groups_full with context %}
+
 {% extends "layout.html" %}
 
 {% block title %}{{title}}{% endblock %}
 
 
 {% block content %}
-    <div class="embed-responsive embed-responsive-1by1">
-        <iframe class="embed-responsive-item" sandbox="allow-top-navigation" {% if srcdoc %}srcdoc="{{srcdoc}}"{% else %}src="{{url}}"{% endif %}>
-        </iframe>
+    {% if entities %}
+        <div class="row">
+            <div class="col">
+                <p align="center"><small>sample of entities, see <a href="{{routing["entities"]}}">full list</a></small></p>
+                {{render_entities_full(sampled_entities)}}
+            </div>
+            <div class="col">
+                <p align="center"><small>sample of groups, see <a href="{{routing["groups"]}}">full list</a></small></p>
+                {{render_groups_full(sampled_groups)}}
+            </div>
+        </div>
+    {% endif %}
+    <div class="row">
+        <div class="embed-responsive embed-responsive-1by1">
+            <iframe class="embed-responsive-item" sandbox="allow-top-navigation" {% if srcdoc %}srcdoc="{{srcdoc}}"{% else %}src="{{url}}"{% endif %}>
+            </iframe>
+        </div>
     </div>
 {% endblock %}

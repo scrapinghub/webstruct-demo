@@ -1,5 +1,6 @@
 import functools
 import logging
+import random
 
 from flask import Flask, render_template, request
 import joblib
@@ -158,6 +159,19 @@ def extract_ner(response_content, response_url, base_url):
     return content, title, entities, groups
 
 
+def sample_entities(entities):
+    unique = list(set(entities))
+    random.shuffle(unique)
+    sampled = unique[:5]
+    sampled = sorted(sampled, key=lambda e:(e[1], e[0]))
+    return sampled
+
+
+def sample_groups(groups):
+    groups = [tuple(sorted(g)) for g in groups]
+    sampled = sorted(list(set(groups)), key=lambda g:-len(g))
+    return sampled[:2]
+
 
 @webstruct_demo.route('/')
 def index():
@@ -182,12 +196,20 @@ def index():
 
     template = _TEMPLATE_MAPPING.get(output, _TEMPLATE_MAPPING['html'])
 
+    sampled_entities = sample_entities(entities)
+    sampled_groups = sample_groups(groups)
+
+    base_url = yarl.URL(request.url)
+    routing = {t: str(base_url.update_query(output=t)) for t in ['html', 'entities', 'groups']}
+
     values = {'url': url,
               'title': title,
               'entities': entities,
+              'sampled_entities': sampled_entities,
+              'sampled_groups': sampled_groups,
+              'routing': routing,
               'srcdoc': content,
               'groups': groups,
               'output': output}
-
 
     return render_template(template, **values)
