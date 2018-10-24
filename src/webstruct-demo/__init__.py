@@ -117,7 +117,7 @@ def get_html_content(response, base_url, output):
                 entity_colors=model.entity_colors,
                 url=url
                 )
-        content = lxml.html.tostring(tree).decode(response.encoding)
+        content = lxml.html.tostring(tree, encoding='utf-8').decode('utf-8')
     elif output == 'entities':
         entities = webstruct.sequence_encoding.IobEncoder.group(zip(tokens, tags))
         entities = webstruct.model._drop_empty(
