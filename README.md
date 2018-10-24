@@ -39,7 +39,7 @@ sudo docker build .
 sudo docker run -ti --rm -p <desired_port>:80 <image_id>
 ```
 
-4. or run container persistently
+5. or run container persistently
 
 ```
 sudo docker run -p <desired_port>:80 --name webstruct-demo -d --restart=always <image_id>
