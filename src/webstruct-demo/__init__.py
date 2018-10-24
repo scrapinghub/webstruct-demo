@@ -19,6 +19,9 @@ webstruct_demo.config.from_pyfile('config.py')
 
 
 def absolutize_link(link, base_url):
+    if link.startswith('#'):
+        return link
+
     try:
         target_url = yarl.URL(link)
     except:
@@ -73,6 +76,9 @@ def parent_links(tree, base_url):
             continue
 
         url = element.attrib['href']
+
+        if url.startswith('#'):
+            continue
 
         element.attrib['target'] = '_parent'
         element.attrib['href'] = str(base_url.update_query(url=url))
