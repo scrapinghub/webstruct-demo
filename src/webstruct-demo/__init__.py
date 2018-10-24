@@ -1,3 +1,4 @@
+import functools
 import logging
 
 from flask import Flask, render_template, request
@@ -102,8 +103,26 @@ def run_model(tree, model):
 
 
 def download(url):
-    response = requests.get(url)
-    return response.content, response.url
+    splash_url = webstruct_demo.config.get('SPLASH_URL', None)
+    splash_user = webstruct_demo.config.get('SPLASH_USER', None)
+    splash_pass = webstruct_demo.config.get('SPLASH_PASS', None)
+
+    is_splash = functools.reduce(lambda x,y: x and y is not None,
+                                 [splash_url, splash_user, splash_pass],
+                                 True)
+
+    if not is_splash:
+        response = requests.get(url)
+        return response.content, response.url
+
+    load = {'url': url,
+            'images': 0,
+            'base_url': url}
+    response = requests.post(splash_url + '/render.html',
+                             json=load,
+                             auth=requests.auth.HTTPBasicAuth(splash_user, splash_pass))
+
+    return response.content, url
 
 
 def get_html_content(response_content, response_url, base_url, output):
