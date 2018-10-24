@@ -2,31 +2,10 @@
 
 {% block title %}{{title}}{% endblock %}
 
-{% macro render_output_option(value, output) %}
-    <option value="{{value}}" {% if value==output %}selected{% endif %}>
-{% endmacro %}
-
 
 {% block content %}
-    <nav class="navbar navbar-expand-lg navbar-light"  style="background-color: #e3f2fd;">
-
-        <div class="collapse navbar-collapse">
-            <form class="form-inline col-lg-12">
-                <label class="col-lg-1" for="urlInput">URL</label>
-                <input class="form-control col-lg-9" type="url" placeholder="http://..." name="url" id="urlInput" value="{{url}}">
-                <select class="form-control col-lg-1" name="output">
-                    {{render_output_option('html', output)}}HTML</option>
-                    {{render_output_option('entities', output)}}entities</option>
-                    {{render_output_option('groups', output)}}groupped entities</option>
-                </select>
-                <button class="btn col-lg-1 btn-info" type="submit">Extract</button>
-            </form>
-        </div>
-    </nav>
-    <div class="container">
-        <div class="embed-responsive embed-responsive-1by1">
-            <iframe class="embed-responsive-item" sandbox="allow-top-navigation" {% if srcdoc %}srcdoc="{{srcdoc}}"{% else %}src="{{srcurl}}"{% endif %}>
-            </iframe>
-        </div>
+    <div class="embed-responsive embed-responsive-1by1">
+        <iframe class="embed-responsive-item" sandbox="allow-top-navigation" {% if srcdoc %}srcdoc="{{srcdoc}}"{% else %}src="{{url}}"{% endif %}>
+        </iframe>
     </div>
 {% endblock %}

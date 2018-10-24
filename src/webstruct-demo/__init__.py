@@ -125,7 +125,7 @@ def download(url):
     return response.content, url
 
 
-def get_html_content(response_content, response_url, base_url, output):
+def extract_ner(response_content, response_url, base_url):
     url = response_url
     tree = html5parser.document_fromstring(response_content)
     tree = remove_namespace(tree)
@@ -136,31 +136,26 @@ def get_html_content(response_content, response_url, base_url, output):
 
     model = joblib.load(webstruct_demo.config['MODEL_PATH'])
     tree, tokens, tags = run_model(tree, model)
-    if output == 'html':
-        tree = model.html_tokenizer.detokenize_single(tokens, tags)
-        tree = webstruct.webannotator.to_webannotator(
-                tree,
-                entity_colors=model.entity_colors,
-                url=url
-                )
-        content = lxml.html.tostring(tree, encoding='utf-8').decode('utf-8')
-    elif output == 'entities':
-        entities = webstruct.sequence_encoding.IobEncoder.group(zip(tokens, tags))
-        entities = webstruct.model._drop_empty(
-            (model.build_entity(tokens), tag)
-            for (tokens, tag) in entities if tag != 'O'
-        )
-        content = webstruct_demo.jinja_env.get_template('entities.html').render(entities=entities)
-    else:
-        groups = webstruct.model.extract_entitiy_groups(
-                tokens,
-                tags,
-                dont_penalize=None,
-                join_tokens=model.build_entity
-                )
-        content = webstruct_demo.jinja_env.get_template('groups.html').render(groups=groups)
+    tree = model.html_tokenizer.detokenize_single(tokens, tags)
+    tree = webstruct.webannotator.to_webannotator(
+            tree,
+            entity_colors=model.entity_colors,
+            url=url
+            )
+    content = lxml.html.tostring(tree, encoding='utf-8').decode('utf-8')
+    entities = webstruct.sequence_encoding.IobEncoder.group(zip(tokens, tags))
+    entities = webstruct.model._drop_empty(
+        (model.build_entity(tokens), tag)
+        for (tokens, tag) in entities if tag != 'O'
+    )
+    groups = webstruct.model.extract_entitiy_groups(
+            tokens,
+            tags,
+            dont_penalize=None,
+            join_tokens=model.build_entity
+            )
 
-    return content, title
+    return content, title, entities, groups
 
 
 
@@ -171,18 +166,28 @@ def index():
 
     try:
         response_content, response_url = download(url)
-        content, title = get_html_content(response_content, response_url, request.url, output)
-        iframe_url = None
+        content, title, entities, groups = extract_ner(response_content,
+                                                       response_url,
+                                                       request.url)
     except:
         logging.exception('Got exception')
         content = None
-        title = ''
-        iframe_url = url
+        title = 'Error during obtaining %s' % (url, )
+        entities = []
+        groups = []
+
+    _TEMPLATE_MAPPING = {'html': 'main.html',
+                         'entities': 'entities.html',
+                         'groups': 'groups.html'}
+
+    template = _TEMPLATE_MAPPING.get(output, _TEMPLATE_MAPPING['html'])
 
     values = {'url': url,
-              'output': output,
+              'title': title,
+              'entities': entities,
               'srcdoc': content,
-              'srcurl': iframe_url,
-              'title': title}
+              'groups': groups,
+              'output': output}
 
-    return render_template('main.html', **values)
+
+    return render_template(template, **values)

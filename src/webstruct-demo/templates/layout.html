@@ -1,3 +1,7 @@
+{% macro render_output_option(value, output) %}
+    <option value="{{value}}" {% if value==output %}selected{% endif %}>
+{% endmacro %}
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -11,11 +15,25 @@
     <title>{% block title %}{% endblock %}</title>
   </head>
   <body>
-    {% block content %}
-    {% endblock %}
+    <nav class="navbar navbar-expand-lg navbar-light"  style="background-color: #e3f2fd;">
 
-
-
+        <div class="collapse navbar-collapse">
+            <form class="form-inline col-lg-12">
+                <label class="col-lg-1" for="urlInput">URL</label>
+                <input class="form-control col-lg-9" type="url" placeholder="http://..." name="url" id="urlInput" value="{{url}}">
+                <select class="form-control col-lg-1" name="output">
+                    {{render_output_option('html', output)}}HTML</option>
+                    {{render_output_option('entities', output)}}entities</option>
+                    {{render_output_option('groups', output)}}groupped entities</option>
+                </select>
+                <button class="btn col-lg-1 btn-info" type="submit">Extract</button>
+            </form>
+        </div>
+    </nav>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

@@ -1,6 +1,10 @@
 
 {% extends "layout.html" %}
 
+{% block title %}
+    {{title}}
+{% endblock %}
+
 {% macro render_entities_header() %}
     <div class="container">
         <table class="table table-bordered">
@@ -13,7 +17,7 @@
           <tbody>
 {% endmacro %}
 
-{% macro render_entities(entities, is_dark, is_striped) %}
+{% macro render_entities(entities) %}
           {% set type_mapper = {'PER':'person', 'ORG':'organization', 'FUNC':'role', 'TEL':'Phone'} %}
           {% for entity in entities %}
             <tr>

@@ -2,6 +2,10 @@
 
 {% extends "layout.html" %}
 
+{% block title %}
+    {{title}}
+{% endblock %}
+
 {% block content %}
     {{render_entities_header()}}
     {% for entities in groups %}
