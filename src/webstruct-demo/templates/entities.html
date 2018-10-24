@@ -33,8 +33,12 @@
     </div>
 {% endmacro %}
 
-{% block content %}
+{% macro render_entities_full(entities) %}
     {{render_entities_header()}}
     {{render_entities(entities)}}
     {{render_entities_footer()}}
+{% endmacro %}
+
+{% block content %}
+    {{render_entities_full(entities)}}
 {% endblock %}

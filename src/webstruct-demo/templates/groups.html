@@ -6,12 +6,16 @@
     {{title}}
 {% endblock %}
 
-{% block content %}
+{% macro render_groups_full(groups) %}
     {{render_entities_header()}}
     {% for entities in groups %}
         {{render_entities(entities)}}
         <tr class="table-secondary"><td></td><td></td></tr>
     {% endfor %}
     {{render_entities_footer()}}
+{% endmacro %}
+
+{% block content %}
+    {{render_groups_full(groups)}}
 {% endblock %}
 
