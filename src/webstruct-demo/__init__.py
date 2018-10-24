@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask, render_template, request
 import joblib
 from lxml.html import html5parser
@@ -99,9 +101,14 @@ def run_model(tree, model):
     return tree, html_tokens, tags
 
 
-def get_html_content(response, base_url, output):
-    url = response.url
-    tree = html5parser.document_fromstring(response.content)
+def download(url):
+    response = requests.get(url)
+    return response.content, response.url
+
+
+def get_html_content(response_content, response_url, base_url, output):
+    url = response_url
+    tree = html5parser.document_fromstring(response_content)
     tree = remove_namespace(tree)
     tree = absolute_links(tree, url)
     tree = parent_links(tree, base_url)
@@ -144,10 +151,11 @@ def index():
     output = request.args.get('output', 'html')
 
     try:
-        response = requests.get(url)
-        content, title = get_html_content(response, request.url, output)
+        response_content, response_url = download(url)
+        content, title = get_html_content(response_content, response_url, request.url, output)
         iframe_url = None
     except:
+        logging.exception('Got exception')
         content = None
         title = ''
         iframe_url = url
