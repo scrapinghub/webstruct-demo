@@ -20,6 +20,8 @@ RUN chmod u+x /install/gunicorn
 COPY src /install/src
 COPY build/model.joblib /install
 RUN echo "MODEL_PATH='/install/model.joblib'" > /install/src/instance/config.py
+COPY build/splash_credentials /install
+RUN cat /install/splash_credentials >> /install/src/instance/config.py
 
 EXPOSE 80
 ENTRYPOINT ["supervisord", "-c", "/install/supervisord.conf", "--nodaemon"]
