@@ -14,7 +14,7 @@ gunicorn==19.9.0
 html5lib==1.0.1
 idna==2.7
 imagesize==1.1.0
-ItsDangerous==1.0.0
+ItsDangerous==1.1.0
 Jinja2==2.10
 joblib==0.12.5
 -e git+https://github.com/adsva/python-wapiti.git@e00d4782759c3fd506886c773fc5bf272919b2d0#egg=libwapiti
