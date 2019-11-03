@@ -48,7 +48,7 @@ tldextract==2.2.0
 toml==0.10.0
 tox==3.5.2
 tqdm==4.27.0
-urllib3==1.24
+urllib3==1.24.2
 virtualenv==16.0.0
 webencodings==0.5.1
 webstruct==0.6
