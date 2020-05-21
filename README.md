@@ -25,22 +25,16 @@ FLASK_ENV=development FLASK_APP=src/webstruct-demo/__init__.py runinenv.sh ~/ves
 
 # How to build docker container
 
-1. Put your model file to `build/model.joblib`
-2. Add splash credentials to `build/splash_credentials` or leave it empty
-3. run container build
+1. Put your model file to `./model/model.joblib`
+2. Add splash credentials to `./src/instance/config.py` if necessary
+3. Run container build
 
 ```
-sudo docker build .
+docker build . -t webstruct-demo
 ```
 
-4. run container temporarily
+4. Run container
 
 ```
-sudo docker run -ti --rm -p <desired_port>:80 <image_id>
-```
-
-5. or run container persistently
-
-```
-sudo docker run -p <desired_port>:80 --name webstruct-demo -d --restart=always <image_id>
+docker run -it -p 8080:8080 -v $(PWD)/src/instance/config.py:/app/instance/config.py -v $(PWD)/model:/model webstruct-demo
 ```
