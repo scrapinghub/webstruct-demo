@@ -36,5 +36,5 @@ docker build . -t webstruct-demo
 4. Run container
 
 ```
-docker run -it -p 8080:8080 -v $(PWD)/src/instance/config.py:/app/instance/config.py -v $(PWD)/model:/model webstruct-demo
+docker run -it -p 8080:8080 -v $(pwd)/src/instance/config.py:/app/instance/config.py -v $(pwd)/model:/model webstruct-demo
 ```
